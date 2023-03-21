@@ -63,7 +63,7 @@ export default function Index() {
 
       <section className="flex-grow py-16 px-8 flex flex-col gap-8 items-center">
         <section>
-          <img src={`/questions/${number}.png`} alt="" className="select-none" draggable={false} />
+          <img src={`/questions/${number}.png`} decoding="async" loading="lazy" alt="" className="select-none" draggable={false} />
         </section>
 
         <section className="flex gap-2">
