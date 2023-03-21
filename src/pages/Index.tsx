@@ -2,6 +2,7 @@ import { Button } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
+import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import useQuestion from '@/store/question';
 import Key from '@/components/Key';
 import Navbar from '@/components/Navbar';
@@ -48,10 +49,7 @@ export default function Index() {
   };
 
   useHotkeys([
-    ['N', rollNext],
     ['ArrowRight', rollNext],
-
-    ['V', rollPrev],
     ['ArrowLeft', rollPrev],
 
     ['Space', toggleTime],
@@ -67,7 +65,7 @@ export default function Index() {
         </section>
 
         <section className="flex gap-2">
-          <Button leftIcon={<Key>V</Key>} onClick={prev}>Previous</Button>
+          <Button leftIcon={<Key><ArrowLeft weight="bold" size={16} /></Key>} onClick={rollPrev}>Previous</Button>
           <Button
             leftIcon={
               <Key>
@@ -82,7 +80,7 @@ export default function Index() {
           >
             Time
           </Button>
-          <Button leftIcon={<Key>N</Key>} onClick={next}>Next</Button>
+          <Button leftIcon={<Key><ArrowRight weight="bold" size={16} /></Key>} onClick={rollNext}>Next</Button>
         </section>
       </section>
     </main>

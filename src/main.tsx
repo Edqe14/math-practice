@@ -14,6 +14,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <MantineProvider
     emotionCache={cache}
     withCSSVariables
+    theme={{
+      fontFamily: 'Inter, sans-serif',
+    }}
   >
     <BrowserRouter>
       <App />
