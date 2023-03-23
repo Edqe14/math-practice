@@ -16,7 +16,7 @@ const getColorByTime = (time: number): [string, string, string] => {
 const Navbar = () => {
   const number = useQuestion((s) => s.number);
   const [totalNumbers] = useQuestion((s) => [s.total], shallow);
-  const [local, total, all, resetTimer] = useTimer((s) => [s.local, s.total, s.all, s.reset], shallow);
+  const [local, total, all, resetTimer, stop] = useTimer((s) => [s.local, s.total, s.all, s.reset, s.stop], shallow);
 
   const [openSide, setOpenSide] = useState(false);
 
@@ -60,15 +60,20 @@ const Navbar = () => {
         <Drawer size="xl" position="right" opened={openSide} onClose={() => setOpenSide(false)} title="Questions" classNames={{ title: 'text-2xl font-semibold', drawer: 'overflow-y-auto text-zinc-700 font-inter', header: 'p-8 sticky bg-white top-0 mb-0 z-10' }}>
           <section className="p-8 pt-0 flex flex-col gap-2">
             {Array(totalNumbers).fill(0).map((_, i) => {
-              const [text, bg, border] = getColorByTime(all.get(i + 1) as number ?? 0);
+              const [text, bg, border] = getColorByTime(all.get(i + 1) ?? 0);
 
               return (
                 <section
                   key={i}
                   className="grid grid-cols-[1fr_4fr] cursor-pointer"
                   onClick={() => {
-                    useQuestion.setState({ number: i + 1 });
+                    stop();
                     setOpenSide(false);
+
+                    useQuestion.setState({ number: i + 1 });
+                    useTimer.setState((s) => ({
+                      local: s.all.get(i + 1) ?? 0,
+                    }));
                   }}
                 >
                   <p>No. {i + 1}</p>
