@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
+import useQuestion from './question';
 
 const INTERVAL = 100;
 
@@ -42,5 +43,38 @@ const useTimer = create(
     reset: () => set((s) => ({ local: 0, total: [...s.all.values()].reduce((acc, i) => acc + i, 0) }))
   }))
 );
+
+export const saveToStorage = () => {
+  const { all } = useTimer.getState();
+
+  const json = [...all.entries()];
+
+  localStorage.setItem('all', JSON.stringify(json));
+};
+
+export const loadFromStorage = () => {
+  const json = localStorage.getItem('all');
+
+  if (!json) return;
+
+  // validation
+  try {
+    const data = JSON.parse(json);
+    // eslint-disable-next-line no-restricted-globals
+    if (!Array.isArray(data) || data.some((item) => !Array.isArray(item) && isNaN(item[0]) && isNaN(item[1]))) throw new Error('Invalid storage data');
+
+    const current = useQuestion.getState().number;
+    const all = new Map(data as [number, number][]);
+
+    useTimer.setState({
+      all,
+      local: all.get(current) ?? 0,
+      total: [...all.values()].reduce((acc, i) => acc + i, 0)
+    });
+  } catch {
+    // eslint-disable-next-line no-console
+    console.error('Invalid storage data');
+  }
+};
 
 export default useTimer;

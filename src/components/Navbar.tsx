@@ -3,7 +3,7 @@ import { ArrowCounterClockwise, List } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Drawer, Tooltip } from '@mantine/core';
 import useQuestion from '@/store/question';
-import useTimer from '@/store/timer';
+import useTimer, { saveToStorage } from '@/store/timer';
 import formatMS from '@/lib/formatMS';
 
 const getColorByTime = (time: number): [string, string, string] => {
@@ -43,10 +43,14 @@ const Navbar = () => {
               onDoubleClick={() => {
                 all.clear();
                 resetTimer();
+
+                saveToStorage();
               }}
               onClick={() => {
                 all.delete(number);
                 resetTimer();
+
+                saveToStorage();
               }}
             />
           </Tooltip>
