@@ -50,9 +50,13 @@ export default function Index() {
 
   useHotkeys([
     ['ArrowRight', rollNext],
+    ['D', rollNext],
+
     ['ArrowLeft', rollPrev],
+    ['A', rollPrev],
 
     ['Space', toggleTime],
+    ['W', toggleTime]
   ]);
 
   return (
