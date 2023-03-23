@@ -49,8 +49,6 @@ export default function Index() {
     }
 
     allTimes.delete(number);
-
-    resetTime();
     startTimer(number);
   };
 
