@@ -17,18 +17,21 @@ const AnswerModal = ({ number }: { number: number }) => (
 
 export default function Index() {
   const number = useQuestion((s) => s.number);
-  const [next, prev] = useQuestion((s) => [s.next, s.prev], shallow);
+  const [next, prev, total] = useQuestion((s) => [s.next, s.prev, s.total], shallow);
   const [startTimer, stopTimer, resetTime, started] = useTimer((s) => [s.start, s.stop, s.reset, s.started], shallow);
   const allTimes = useTimer((s) => s.all);
-
-  useEffect(() => {
-    next();
-    loadFromStorage();
-  }, []);
 
   const setTime = (num: number) => {
     const time = allTimes.get(num) ?? 0;
     useTimer.setState({ local: time });
+  };
+
+  const preloadImage = (i: number) => {
+    const url = `/questions/${i}.webp`;
+    const img = new Image();
+    img.src = url;
+
+    return img;
   };
 
   const rollNext = () => {
@@ -37,6 +40,7 @@ export default function Index() {
 
     const i = next();
     setTime(i);
+    if (i + 1 < total) preloadImage(i + 1);
   };
 
   const rollPrev =() => {
@@ -44,7 +48,10 @@ export default function Index() {
     resetTime();
 
     const i = prev();
-    if (i !== -1) setTime(i);
+    if (i !== -1) {
+      setTime(i);
+      if (i > 1) preloadImage(i - 1);
+    }
   };
 
   const toggleTime = () => {
@@ -70,6 +77,11 @@ export default function Index() {
       children: <AnswerModal number={number} />,
     });
   };
+
+  useEffect(() => {
+    rollNext();
+    loadFromStorage();
+  }, []);
 
   useHotkeys([
     ['ArrowRight', rollNext],
