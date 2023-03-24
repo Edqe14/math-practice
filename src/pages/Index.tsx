@@ -7,7 +7,7 @@ import { openModal } from '@mantine/modals';
 import useQuestion from '@/store/question';
 import Key from '@/components/Key';
 import Navbar from '@/components/Navbar';
-import useTimer from '@/store/timer';
+import useTimer, { loadFromStorage, saveToStorage } from '@/store/timer';
 
 const AnswerModal = ({ number }: { number: number }) => (
   <section>
@@ -23,6 +23,7 @@ export default function Index() {
 
   useEffect(() => {
     next();
+    loadFromStorage();
   }, []);
 
   const setTime = (num: number) => {
@@ -47,11 +48,14 @@ export default function Index() {
   };
 
   const toggleTime = () => {
-    if (started) return stopTimer();
+    if (started) {
+      stopTimer();
+      saveToStorage();
+
+      return;
+    }
 
     allTimes.delete(number);
-
-    resetTime();
     startTimer(number);
   };
 
@@ -69,9 +73,13 @@ export default function Index() {
 
   useHotkeys([
     ['ArrowRight', rollNext],
+    ['D', rollNext],
+
     ['ArrowLeft', rollPrev],
+    ['A', rollPrev],
 
     ['Space', toggleTime],
+    ['W', toggleTime]
   ]);
 
   return (
