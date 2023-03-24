@@ -3,10 +3,17 @@ import { useHotkeys } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
+import { openModal } from '@mantine/modals';
 import useQuestion from '@/store/question';
 import Key from '@/components/Key';
 import Navbar from '@/components/Navbar';
 import useTimer from '@/store/timer';
+
+const AnswerModal = ({ number }: { number: number }) => (
+  <section>
+    <img src={`/answers/${number}.webp`} />
+  </section>
+);
 
 export default function Index() {
   const number = useQuestion((s) => s.number);
@@ -48,6 +55,18 @@ export default function Index() {
     startTimer(number);
   };
 
+  const showAnswer = () => {
+    openModal({
+      title: `Answer for question ${number}`,
+      classNames: {
+        title: 'text-xl font-semibold',
+      },
+      size: 'xl',
+      centered: true,
+      children: <AnswerModal number={number} />,
+    });
+  };
+
   useHotkeys([
     ['ArrowRight', rollNext],
     ['ArrowLeft', rollPrev],
@@ -61,7 +80,7 @@ export default function Index() {
 
       <section className="flex-grow py-16 px-8 flex flex-col gap-8 items-center">
         <section>
-          <img src={`/questions/${number}.png`} decoding="async" loading="lazy" alt="" className="select-none" draggable={false} />
+          <img src={`/questions/${number}.webp`} decoding="async" loading="lazy" alt="" className="select-none" draggable={false} />
         </section>
 
         <section className="flex gap-2">
@@ -81,6 +100,10 @@ export default function Index() {
             Time
           </Button>
           <Button leftIcon={<Key><ArrowRight weight="bold" size={16} /></Key>} onClick={rollNext}>Next</Button>
+        </section>
+
+        <section>
+          <p onClick={showAnswer} className="text-red-300 cursor-pointer transition-colors duration-200 ease-in-out hover:text-red-500 hover:underline hover:underline-offset-4">Reveal answer</p>
         </section>
       </section>
     </main>

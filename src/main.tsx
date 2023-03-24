@@ -1,6 +1,7 @@
 import { createEmotionCache, MantineProvider } from '@mantine/core';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { ModalsProvider } from '@mantine/modals';
 import App from './App';
 import './index.css';
 import '@fontsource/inter';
@@ -18,8 +19,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       fontFamily: 'Inter, sans-serif',
     }}
   >
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ModalsProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ModalsProvider>
   </MantineProvider>
 );
