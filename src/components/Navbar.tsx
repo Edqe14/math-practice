@@ -10,7 +10,7 @@ const getColorByTime = (time: number): [string, string, string] => {
   if (time <= 90 * 1000) return ['text-green-600', 'bg-green-100', 'border-green-600']; // 1 min 30s
   if (time <= 60 * 2 * 1000 + 45_000) return ['text-yellow-600', 'bg-yellow-100', 'border-yellow-600']; // 2 min 45s
 
-  return ['text-red-600', 'text-red-100', 'border-red-600']; // 3 min or above
+  return ['text-red-600', 'bg-red-100', 'border-red-600']; // 3 min or above
 };
 
 const Navbar = () => {
