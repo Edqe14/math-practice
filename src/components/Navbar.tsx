@@ -1,7 +1,8 @@
 import { shallow } from 'zustand/shallow';
-import { ArrowCounterClockwise, List } from '@phosphor-icons/react';
+import { ArrowCounterClockwise, ArrowFatLineRight, ArrowLineRight, List } from '@phosphor-icons/react';
 import { useState } from 'react';
-import { Drawer, Tooltip } from '@mantine/core';
+import { Drawer, Switch, Tooltip } from '@mantine/core';
+import { openConfirmModal } from '@mantine/modals';
 import useQuestion from '@/store/question';
 import useTimer, { saveToStorage } from '@/store/timer';
 import formatMS from '@/lib/formatMS';
@@ -16,7 +17,7 @@ const getColorByTime = (time: number): [string, string, string] => {
 const Navbar = () => {
   const number = useQuestion((s) => s.number);
   const [totalNumbers] = useQuestion((s) => [s.total], shallow);
-  const [local, total, all, resetTimer, stop] = useTimer((s) => [s.local, s.total, s.all, s.reset, s.stop], shallow);
+  const [local, total, all, resetTimer, stop, continuous] = useTimer((s) => [s.local, s.total, s.all, s.reset, s.stop, s.continuous], shallow);
 
   const [openSide, setOpenSide] = useState(false);
 
@@ -35,7 +36,48 @@ const Navbar = () => {
       </section>
 
       <section>
-        <span className="cursor-pointer transition-colors z-50 flex gap-3">
+        <span className="cursor-pointer transition-colors z-50 flex gap-5">
+          <Tooltip label="Continuous Mode" withArrow offset={10} color="orange">
+            <section className="flex gap-2 items-center">
+              {continuous && <ArrowFatLineRight size={24} weight="fill" />}
+              {!continuous && <ArrowLineRight size={24} weight="fill" />}
+
+              <Switch
+                color="orange"
+                className="flex"
+                checked={continuous}
+                onClick={() => {
+                  if (continuous) {
+                    localStorage.removeItem('continuous');
+                    return useTimer.setState({ continuous: false });
+                  }
+
+                  openConfirmModal({
+                    title: 'Continuous Mode',
+                    children: (
+                      <p className="font-inter">Are you sure you want to enable continuous mode? This will reset the timer for every question.</p>
+                    ),
+                    centered: true,
+                    labels: {
+                      confirm: 'OK',
+                      cancel: 'Cancel'
+                    },
+                    confirmProps: {
+                      color: 'orange'
+                    },
+                    classNames: {
+                      title: 'text-xl font-semibold',
+                    },
+                    onConfirm: () => {
+                      useTimer.setState({ continuous: true });
+                      localStorage.setItem('continuous', 'true');
+                    }
+                  });
+                }}
+              />
+            </section>
+          </Tooltip>
+
           <Tooltip label="Reset timer" withArrow offset={10} color="orange">
             <ArrowCounterClockwise
               weight="bold"
@@ -54,6 +96,7 @@ const Navbar = () => {
               }}
             />
           </Tooltip>
+
           <List onClick={() => setOpenSide(!openSide)} weight="bold" size={24} />
         </span>
 

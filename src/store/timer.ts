@@ -12,6 +12,8 @@ const useTimer = create(
     activeNumber: -1,
     started: false,
 
+    continuous: false,
+
     timer: null as NodeJS.Timer | null
   }, (set, get) => ({
     start: (number: number) => {
@@ -40,6 +42,11 @@ const useTimer = create(
         all: new Map([...get().all, [activeNumber, local]])
       });
     },
+    saveLocal: () => {
+      const { activeNumber, local } = get();
+
+      set((s) => ({ all: new Map([...s.all, [activeNumber, local]]) }));
+    },
     reset: () => set((s) => ({ local: 0, total: [...s.all.values()].reduce((acc, i) => acc + i, 0) }))
   }))
 );
@@ -54,6 +61,9 @@ export const saveToStorage = () => {
 
 export const loadFromStorage = () => {
   const json = localStorage.getItem('all');
+  const continuous = localStorage.getItem('continuous');
+
+  useTimer.setState({ continuous: continuous === 'true' });
 
   if (!json) return;
 

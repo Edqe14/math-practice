@@ -18,7 +18,7 @@ const AnswerModal = ({ number }: { number: number }) => (
 export default function Index() {
   const number = useQuestion((s) => s.number);
   const [next, prev, total] = useQuestion((s) => [s.next, s.prev, s.total], shallow);
-  const [startTimer, stopTimer, resetTime, started] = useTimer((s) => [s.start, s.stop, s.reset, s.started], shallow);
+  const [startTimer, stopTimer, resetTime, started, continuous, saveLocal] = useTimer((s) => [s.start, s.stop, s.reset, s.started, s.continuous, s.saveLocal], shallow);
   const allTimes = useTimer((s) => s.all);
 
   const setTime = (num: number) => {
@@ -35,21 +35,33 @@ export default function Index() {
   };
 
   const rollNext = () => {
-    stopTimer();
+    if (started) {
+      if (!continuous) stopTimer();
+      else saveLocal();
+    }
+
     resetTime();
 
     const i = next();
-    setTime(i);
+    if (!continuous && started || !started) setTime(i);
+    else useTimer.setState({ activeNumber: i });
+
     if (i + 1 < total) preloadImage(i + 1);
   };
 
   const rollPrev =() => {
-    stopTimer();
+    if (started) {
+      if (!continuous) stopTimer();
+      else saveLocal();
+    }
+
     resetTime();
 
     const i = prev();
     if (i !== -1) {
-      setTime(i);
+      if (!continuous && started || !started) setTime(i);
+      else useTimer.setState({ activeNumber: i });
+
       if (i > 1) preloadImage(i - 1);
     }
   };
