@@ -1,9 +1,10 @@
 import { Button } from '@mantine/core';
-import { useHotkeys } from '@mantine/hooks';
+import { useHotkeys, useViewportSize } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { openModal } from '@mantine/modals';
+import ReactConfetti from 'react-confetti';
 import useQuestion from '@/store/question';
 import Key from '@/components/Key';
 import Navbar from '@/components/Navbar';
@@ -20,6 +21,7 @@ export default function Index() {
   const [next, prev, total] = useQuestion((s) => [s.next, s.prev, s.total], shallow);
   const [startTimer, stopTimer, resetTime, started, continuous, saveLocal] = useTimer((s) => [s.start, s.stop, s.reset, s.started, s.continuous, s.saveLocal], shallow);
   const allTimes = useTimer((s) => s.all);
+  const { width, height } = useViewportSize();
 
   const setTime = (num: number) => {
     const time = allTimes.get(num) ?? 0;
@@ -93,6 +95,15 @@ export default function Index() {
   useEffect(() => {
     rollNext();
     loadFromStorage();
+
+    openModal({
+      title: 'It\'s done!! 🎉',
+      children: 'Exam is over but feel free to use this app for practice.',
+      classNames: {
+        title: 'text-xl font-semibold',
+      },
+      centered: true,
+    });
   }, []);
 
   useHotkeys([
@@ -109,6 +120,14 @@ export default function Index() {
   return (
     <main className="font-inter w-screen h-screen flex flex-col text-zinc-700">
       <Navbar />
+
+      <ReactConfetti
+        width={width}
+        height={height}
+        numberOfPieces={300}
+        recycle={false}
+        className="z-[100000]"
+      />
 
       <section className="flex-grow py-16 px-8 flex flex-col gap-8 items-center">
         <section>
